@@ -19,7 +19,78 @@ async function run(){
 
     try{
         await client.connect();
+        const database = client.db("cameraShop");
+        const productsCollection = database.collection("products");
+        const ordersCollection = database.collection("orders");
+        const reviewsCollection = database.collection("review");
+
+        app.get('/products', async(req, res)=>{
+            const product = productsCollection.find({})
+            const result = await product.toArray(product);
+            res.json(result)
+        })
+
+        //data load by id on db
+        app.get('/products/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await productsCollection.findOne(query)
+            res.json(result);
+        })
         
+        //all order get from db
+        app.get('/allorders', async(req, res)=>{
+            const order = ordersCollection.find({})
+            const result = await order.toArray()
+            res.json(result)
+        })
+
+        //detele from db in all order api
+        app.delete('/allorders/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await ordersCollection.deleteOne(query)
+            res.json(result)
+        })
+
+        ///order get from db by particular gmail id
+        app.get('/orders', async(req, res)=>{
+            const email = req.query.email;
+            const query = {email:email}
+            const order = ordersCollection.find(query)
+            const result = await order.toArray(order)
+            res.json(result)
+
+        })
+        app.delete('/orders/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await ordersCollection.deleteOne(query)
+            res.json(result)
+        })
+        
+
+        // get review data from db
+        app.get('/reviews', async(req, res)=>{
+            const review = reviewsCollection.find({})
+            const result = await review.toArray(review)
+            res.json(result)
+        })
+
+        //order post to db
+            app.post('/orders', async(req, res)=>{
+                const order = req.body;
+                const result = await ordersCollection.insertOne(order)
+                res.json(result)
+            })
+            
+            //review post to db
+
+            app.post('/reviews', async(req, res)=>{
+                const review = req.body;
+                const result = await reviewsCollection.insertOne(review);
+                res.json(result)
+            })
     }
     finally{
         // await client.close();
