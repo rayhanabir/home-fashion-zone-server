@@ -35,7 +35,9 @@ async function run(){
         app.get('/products/:id', async(req, res)=>{
             const id = req.params.id;
             const query = {_id:ObjectId(id)}
+            console.log(id)
             const result = await productsCollection.findOne(query)
+            console.log(result)
             res.json(result);
         })
         
@@ -150,6 +152,9 @@ run().catch(console.dir);
 
 app.get('/', (req, res) => {
   res.send('Best Camera Shop server ')
+})
+app.get('/hello', (req, res) => {
+  res.send('Best Camera Shop .i amready ')
 })
 
 app.listen(port, () => {
